@@ -32,8 +32,10 @@ class MainViewModel : ViewModel() {
                     _error.value = "Error del servidor: ${response.code()}"
                 }
             } catch (e: Exception) {
-                // Si el servidor está apagado o no hay internet, capturamos el error
-                _error.value = "Error de conexión: Verifica que tu servidor local esté encendido."
+                // Mantenemos el aviso en pantalla
+                _error.value = "Error técnico: Revisa el Logcat"
+                // ¡ESTA ES LA LÍNEA MÁGICA! Imprime el error entero en rojo en la consola
+                android.util.Log.e("ERROR_KEDO", "Fallo exacto de Gson:", e)
             }
         }
     }

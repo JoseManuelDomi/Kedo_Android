@@ -3,27 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:paddingTop="24dp"
+    android:background="#F5F5F5"> <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Eventos en Sevilla"
+    android:textSize="28sp"
+    android:textStyle="bold"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginBottom="16dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Eventos en Sevilla"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
-
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEventos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/tvResultados"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cargando datos desde Spring Boot..."
-            android:textSize="18sp"
-            android:textColor="#333333"/>
-    </ScrollView>
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"/>
 
 </LinearLayout>
