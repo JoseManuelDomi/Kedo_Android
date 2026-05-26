@@ -4,5 +4,6 @@ data class Usuario(
     val id: Long? = null,
     val nombre: String,
     val email: String,
-    val rol: String? = "USER"
+    val rol: String? = "USER",
+    val password: String
 )
