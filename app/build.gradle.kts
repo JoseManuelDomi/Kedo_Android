@@ -3,6 +3,7 @@ import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 // Para abrir la caja fuerte local.properties
@@ -51,6 +52,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.firebase.auth)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,4 +64,11 @@ dependencies {
     // Conversar para traducir automáticamente los JSON a clases de Kotlin (Gson)
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    // Importamos la plataforma principal de Firebase (BOM)
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
+    // Importamos el módulo específico de Autenticación
+    implementation("com.google.firebase:firebase-auth")
 }
