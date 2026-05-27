@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    // ¡FUNCIÓN onCreate!
     override fun onCreate(savedInstanceState: Bundle?) {
         // Inicializamos Splash Screen y GPS antes de dibujar la interfaz
         installSplashScreen()
@@ -74,6 +76,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         fabCrearEvento.setOnClickListener {
             val intent = Intent(this, CrearEventoActivity::class.java)
             startActivity(intent)
+        }
+
+        // NUEVO: Leemos la libreta para saber quién acaba de entrar.
+        val sharedPref = getSharedPreferences("KedoAppPrefs", MODE_PRIVATE)
+        // Pedimos el rol. Si por algún error la libreta está vacía, asumimos que es "CLIENTE" por seguridad.
+        val rolUsuario = sharedPref.getString("ROL_USUARIO", "CLIENTE")
+
+        // NUEVO: Lógica de visibilidad.
+        if (rolUsuario == "CLIENTE") {
+            fabCrearEvento.visibility = View.GONE // Lo ocultamos y quitamos su espacio.
+        } else {
+            fabCrearEvento.visibility = View.VISIBLE // Se lo mostramos a las empresas.
         }
 
         // Inicializamos el ViewModel

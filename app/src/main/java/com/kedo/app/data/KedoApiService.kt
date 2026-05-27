@@ -19,4 +19,7 @@ interface KedoApiService {
 
     @POST("/api/eventos")
     suspend fun crearEvento(@Body evento: Evento): Response<Evento>
+
+    @POST("/api/usuarios")
+    suspend fun registrarUsuarioBackend(@Body usuario: Usuario): Response<Usuario>
 }

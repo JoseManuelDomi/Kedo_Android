@@ -68,7 +68,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     // Importamos la plataforma principal de Firebase (BOM)
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
-
     // Importamos el módulo específico de Autenticación
     implementation("com.google.firebase:firebase-auth")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }
