@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -73,10 +74,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Configuración del botón flotante para ir al formulario
         val fabCrearEvento = findViewById<FloatingActionButton>(R.id.fabCrearEvento)
-        fabCrearEvento.setOnClickListener {
-            val intent = Intent(this, CrearEventoActivity::class.java)
-            startActivity(intent)
-        }
 
         // NUEVO: Leemos la libreta para saber quién acaba de entrar.
         val sharedPref = getSharedPreferences("KedoAppPrefs", MODE_PRIVATE)
@@ -89,6 +86,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             fabCrearEvento.visibility = View.VISIBLE // Se lo mostramos a las empresas.
         }
+
+        fabCrearEvento.setOnClickListener {
+            val intent = Intent(this, CrearEventoActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 1. Enlazamos el botón de salir
+        val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
+
+        // 2. Programamos el clic
+        btnCerrarSesion.setOnClickListener {
+            // Acción A: Borramos la libreta del teléfono
+            val sharedPref = getSharedPreferences("KedoAppPrefs", MODE_PRIVATE)
+            sharedPref.edit().clear().apply()
+
+            // Acción B: Desconectamos la cuenta de Firebase
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+
+            // Acción C: Volvemos a la pantalla de Login y cerramos el mapa
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+
 
         // Inicializamos el ViewModel
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]

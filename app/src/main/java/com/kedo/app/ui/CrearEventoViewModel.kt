@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.kedo.app.data.RetrofitClient
 import com.kedo.app.domain.Evento
 import com.kedo.app.domain.Usuario
@@ -19,41 +20,43 @@ class CrearEventoViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    fun publicarNuevoEvento(titulo: String, descripcion: String, maxAsistentes: Int) {
+    // 1. Actualizamos los enchufes para recibir los datos exactos del formulario
+    fun publicarNuevoEvento(titulo: String, descripcion: String, latitud: Double, longitud: Double, fechaCompleta: String) {
         viewModelScope.launch {
             try {
-                // 1. Creamos un Usuario 'simulado' temporal hasta que hagamos el Login real
-                val usuarioSim = Usuario(
-                    id = 1,
-                    nombre = "José Manuel",
-                    email = "jose.manuel@kedo.dev",
-                    password = "secret_1234!",
-                    rol = "USER"
+                // 2. Extraemos el email real del usuario que tiene la sesión iniciada
+                val correoEmpresa = FirebaseAuth.getInstance().currentUser?.email ?: ""
+
+                // 3. Construimos el usuario "cebo".
+                val creador = Usuario(
+                    id = null,
+                    nombre = "",
+                    email = correoEmpresa,
+                    password = "", // La seguridad la lleva Firebase
+                    rol = "EMPRESA"
                 )
 
-                /* 2. Construimos el Evento con los datos del formulario
-                Ponemos unas coordenadas genéricas de Sevilla por el momento.
-                 */
+                // 4. Empaquetamos el Evento con los datos reales recogidos del GPS y del calendario
                 val nuevoEvento = Evento(
                     id = null,
                     titulo = titulo,
                     descripcion = descripcion,
-                    creador = usuarioSim,
-                    latitud = 37.3891,
-                    longitud = -5.9845,
-                    fechaEvento = "2026-09-15T18:00:00", // Fecha y hora de ejemplo.
-                    fechaRegistro = null
+                    creador = creador,
+                    latitud = latitud,
+                    longitud = longitud,
+                    fechaEvento = fechaCompleta,
+                    fechaRegistro = null // Spring Boot pondrá la fecha de creación automáticamente
                 )
 
-                // 3. Enviamos el POST a Spring Boot.
+                // 5. Disparamos el misil hacia el servidor backend
                 val response = RetrofitClient.apiService.crearEvento(nuevoEvento)
                 if (response.isSuccessful) {
-                    _eventoCreado.value = true
+                    _eventoCreado.value = true // Avisamos de que todo ha ido genial
                 } else {
-                    _error.value = "Error al guardar: ${response.code()}"
+                    _error.value = "Error al guardar en el servidor: código ${response.code()}"
                 }
             } catch (e: Exception) {
-                _error.value = "Error técnico: ${e.message}"
+                _error.value = "Error técnico de red: revisa que Spring Boot esté encendido"
             }
         }
     }
