@@ -160,6 +160,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         enableMyLocation()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (::viewModel.isInitialized) {
+            viewModel.cargarEventos()
+        }
+    }
+
     /**
      * Función para limpiar el mapa y dibujar los marcadores de la lista.
      */
