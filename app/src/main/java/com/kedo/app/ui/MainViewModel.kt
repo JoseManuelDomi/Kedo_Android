@@ -1,6 +1,5 @@
 package com.kedo.app.ui
 
-//IMPORTS
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,8 +33,29 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 // Mantenemos el aviso en pantalla
                 _error.value = "Error técnico: Revisa el Logcat"
-                // ¡ESTA ES LA LÍNEA MÁGICA! Imprime el error entero en rojo en la consola
+                // Imprime el error entero en rojo en la consola
                 android.util.Log.e("ERROR_KEDO", "Fallo exacto de Gson:", e)
+            }
+        }
+    }
+
+    // FUNCIÓN: ELIMINAR EVENTOS
+    fun borrarEvento(id: Long) {
+        viewModelScope.launch {
+            try {
+                // 1. Mandamos la orden de destrucción al backend
+                val response = RetrofitClient.apiService.eliminarEvento(id)
+
+                if (response.isSuccessful) {
+                    // 2. Si el backend confirma que lo ha borrado, recargamos la lista
+                    // Esto hará que la tarjeta desaparezca automáticamente de la interfaz
+                    cargarEventos()
+                } else {
+                    _error.value = "Error al borrar: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                _error.value = "Error de conexión al borrar"
+                android.util.Log.e("ERROR_KEDO", "Fallo al borrar evento:", e)
             }
         }
     }

@@ -72,6 +72,50 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         adapter = EventoAdapter(emptyList())
         rvEventos.adapter = adapter
 
+        // GESTOS TÁCTILES: DESLIZAR PARA ELIMINAR / EDITAR
+        val itemTouchHelperCallback = object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+            0, androidx.recyclerview.widget.ItemTouchHelper.LEFT or androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                // No usamos la función de reordenar tarjetas arrastrando hacia arriba/abajo
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // 1. Averiguamos qué posición de la lista ha tocado el usuario
+                val posicion = viewHolder.adapterPosition
+
+                // 2. Recuperamos la lista actual de eventos que tenemos en pantalla
+                val listaActual = viewModel.eventos.value
+
+                if (listaActual != null) {
+                    val eventoSeleccionado = listaActual[posicion]
+
+                    if (direction == androidx.recyclerview.widget.ItemTouchHelper.LEFT) {
+                        // ACCIÓN: Deslizar a la IZQUIERDA (Eliminar)
+                        eventoSeleccionado.id?.let { id ->
+                            viewModel.borrarEvento(id)
+                            Toast.makeText(this@MainActivity, "Borrando evento...", Toast.LENGTH_SHORT).show()
+                        }
+                    } else if (direction == androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+                        // ACCIÓN: Deslizar a la DERECHA (Editar)
+                        // TODO: Aquí abriremos la pantalla de edición en el futuro
+                        Toast.makeText(this@MainActivity, "Modo edición en construcción", Toast.LENGTH_SHORT).show()
+                        // Devolvemos la tarjeta a su sitio para que no se quede oculta
+                        adapter.notifyItemChanged(posicion)
+                    }
+                }
+            }
+        }
+
+        // Enganchamos este detector de gestos a nuestra lista
+        val itemTouchHelper = androidx.recyclerview.widget.ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(rvEventos)
+
         // Configuración del botón flotante para ir al formulario
         val fabCrearEvento = findViewById<FloatingActionButton>(R.id.fabCrearEvento)
 
